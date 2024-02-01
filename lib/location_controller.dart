@@ -1,27 +1,23 @@
-import 'package:geolocator/geolocator.dart';
+import 'package:background_location/background_location.dart';
 import 'dart:async';
 
 class LocationService {
-  Future<void> initializeLocationService() async {
-    if (!(await Geolocator.isLocationServiceEnabled())) {
-      throw Exception('Location services are disabled.');
-    }
+  Future<void> initBackgroundLocation() async {
+    await BackgroundLocation.startLocationService();
+    await BackgroundLocation.setAndroidNotification(
+      title: 'Location Tracking',
+      message: 'Your location is being tracked in the background.',
+      icon: '@mipmap/ic_launcher',
+    );
 
-    var permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        throw Exception('Location permissions are denied');
-      }
-    }
+    BackgroundLocation.getLocationUpdates((location) {
+      print('Location: ${location.latitude}, ${location.longitude}');
+      // Do something with the location data
+    });
 
-    if (permission == LocationPermission.deniedForever) {
-      throw Exception(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-  }
-
-  Future<Position> determinePosition() async {
-    return await Geolocator.getCurrentPosition();
+    // You can also use other methods provided by the package, such as
+    // BackgroundLocation.getLatestLocation()
+    // BackgroundLocation.stopLocationService()
+    // etc.
   }
 }

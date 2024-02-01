@@ -13,7 +13,6 @@ void main() async {
       }
     },
   );
-  await LocationService().initializeLocationService();
   await initializeService();
   runApp(const myApp());
 }
