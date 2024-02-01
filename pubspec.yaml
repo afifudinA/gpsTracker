@@ -1,0 +1,26 @@
+name: gps_tracker
+description: "A new Flutter project."
+publish_to: 'none' 
+version: 1.0.0+1
+environment:
+  sdk: '>=3.2.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  geolocator: ^7.0.1
+  flutter_background_service: ^2.4.6
+  flutter_background_service_android: ^3.0.3
+  flutter_background_service_ios: ^2.4.0
+  permission_handler: ^10.2.0
+  flutter_local_notifications: ^13.0.0
+  cupertino_icons: ^1.0.2
+  http: ^1.2.0
+  gsheets: ^0.5.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+flutter:
+  uses-material-design: true
