@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gps_tracker/background_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'homeview.dart';
-import 'location_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +12,8 @@ void main() async {
       }
     },
   );
-  await initializeService();
+  BackgroundService backgroundService = BackgroundService();
+  await backgroundService.initializeService();
   runApp(const myApp());
 }
 
