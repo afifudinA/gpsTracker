@@ -1,16 +1,19 @@
+import 'package:gps_tracker/sharedData.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 
-class sendApi {
-  static Future<void> sendLocationToAPI(Position position) async {
+class SendApi {
+  static Future<void> sendLocationToAPI(SharedData sharedData) async {
     try {
-      final apiUrl =
-          'https://script.google.com/macros/s/AKfycbxm80rH_2lv_I5wz-ExR580K9kFtef44308FSkRmRWjY-8aE1P2ZekhZrfs4buCwSXH7Q/exec'; // Replace with your API endpoint
+      const apiUrl =
+          'http://irapid.top:8000/api/location'; // Replace with your API URL
       final response = await http.post(
         Uri.parse(apiUrl),
         body: {
-          'latitude': position.latitude.toString(),
-          'longitude': position.longitude.toString(),
+          'busId': "test",
+          'timestamp': sharedData.timeStamp.toString(),
+          'latitude': sharedData.latitude.toString(),
+          'longitude': sharedData.longitude.toString(),
         },
       );
 

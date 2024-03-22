@@ -1,25 +1,26 @@
 // settings_page.dart
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // settings_page.dart
 
 class SettingsPage extends StatefulWidget {
   final Function(String) onBusIdChanged;
 
-  SettingsPage({required this.onBusIdChanged});
+  const SettingsPage({super.key, required this.onBusIdChanged});
 
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  State<SettingsPage> createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  TextEditingController _busIdController = TextEditingController();
+  final TextEditingController _busIdController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Settings"),
+        title: const Text("Settings"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -28,9 +29,9 @@ class _SettingsPageState extends State<SettingsPage> {
           children: [
             TextField(
               controller: _busIdController,
-              decoration: InputDecoration(labelText: 'Enter Bus ID'),
+              decoration: const InputDecoration(labelText: 'Enter Bus ID'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 // Access the entered busId from _busIdController.text
@@ -39,16 +40,22 @@ class _SettingsPageState extends State<SettingsPage> {
                 widget.onBusIdChanged(newBusId);
                 // Optionally, you can also update other parts of the app
                 // or perform any additional actions related to the busId change.
+                saveData();
                 print("New Bus ID: $newBusId");
                 // Return the newBusId as a result to the previous screen
                 Navigator.pop(context, newBusId);
               },
-              child: Text("Save Bus ID"),
+              child: const Text("Save Bus ID"),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('busId', _busIdController.text);
   }
 
   @override

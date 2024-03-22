@@ -6,7 +6,8 @@ class SharedData with ChangeNotifier {
   String? busID;
   double? latitude;
   double? longitude;
-  double? timeStamp;
+  int? timeStamp;
+  int? lastUpdateTimestamp;
 
   // Constructor
   SharedData({
@@ -14,6 +15,7 @@ class SharedData with ChangeNotifier {
     this.latitude,
     this.longitude,
     this.timeStamp,
+    this.lastUpdateTimestamp
   });
 
   // Factory method to create an instance from a map
@@ -27,6 +29,7 @@ class SharedData with ChangeNotifier {
       latitude: map['latitude'],
       longitude: map['longitude'],
       timeStamp: map['timeStamp'],
+      lastUpdateTimestamp: map['lastUpdateTimestamp'],
     );
   }
 
@@ -37,6 +40,7 @@ class SharedData with ChangeNotifier {
       'latitude': latitude,
       'longitude': longitude,
       'timeStamp': timeStamp,
+      'lastUpdateTimestamp': lastUpdateTimestamp,
     };
   }
 
@@ -45,9 +49,11 @@ class SharedData with ChangeNotifier {
     notifyListeners(); // Notify listeners about the change
   }
 
-  void updateLocation(double? newlatitude, double? newlongitude) {
+  void updateLocation(double? newlatitude, double? newlongitude, int? newLastUpdateTimestamp) {
     latitude = newlatitude;
     longitude = newlongitude;
+    timeStamp = DateTime.now().millisecondsSinceEpoch;
+    lastUpdateTimestamp = newLastUpdateTimestamp;
     notifyListeners(); // Notify listeners about the change
   }
 }

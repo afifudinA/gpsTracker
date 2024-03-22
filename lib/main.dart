@@ -25,7 +25,7 @@ class myApp extends StatelessWidget {
     return MaterialApp(
       title: 'Background Service',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }

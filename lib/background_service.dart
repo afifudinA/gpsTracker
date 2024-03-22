@@ -4,14 +4,18 @@ import 'package:background_location/background_location.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:gps_tracker/sharedData.dart';
+import 'package:gps_tracker/sharedDataStore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'api_send.dart';
 import 'location_controller.dart';
 
 class BackgroundService {
-  final StreamController<Location?> _locationStreamController =
-      StreamController<Location?>.broadcast();
-  int _repeatTimer = 5;
+  StreamController<SharedData?> locationStreamController =
+      StreamController<SharedData?>.broadcast();
+  final int _repeatTimer = 5;
   Location? _locationNow;
-  SharedData _sharedDataInstance = SharedData();
+  final SharedData _sharedDataInstance = SharedData();
+  var dataStore = SingletonDataStore.instance;
 
   BackgroundService();
 
@@ -61,14 +65,20 @@ class BackgroundService {
       try {
         _locationNow = await LocationService().getLocation();
 
-        print("Repeating print every $_repeatTimer seconds");
-        print(
-            "Location Now = Latitude ${_locationNow?.latitude}, longitude ${_locationNow?.longitude}, at ${_locationNow?.time}");
+        // print("Repeating print every $_repeatTimer seconds");
+        // print(
+        //     "Location Now = Latitude ${_locationNow?.latitude}, longitude ${_locationNow?.longitude}, at ${_locationNow?.time}");
 
-        updateLocation(_locationNow?.latitude, _locationNow?.longitude);
-        print("Bus Id = ${_sharedDataInstance.busID}");
-        print("Latitude = ${_sharedDataInstance.latitude}");
-        print(_sharedDataInstance.longitude);
+        updateLocation(_locationNow?.latitude, _locationNow?.longitude, _locationNow?.time?.round());
+        locationStreamController.add(_sharedDataInstance);
+        await saveData(_sharedDataInstance);
+        await SendApi.sendLocationToAPI(_sharedDataInstance);
+
+        // print("Bus Id = ${_sharedDataInstance.busID}");
+        // print("Latitude = ${_sharedDataInstance.latitude}");
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        print(prefs.getInt('lastUpdateTimestamp') ?? 0);
+        print(_sharedDataInstance.lastUpdateTimestamp);
       } catch (e) {
         print("Error getting location: $e");
       }
@@ -81,11 +91,20 @@ class BackgroundService {
     _sharedDataInstance.updateBusId(newBusId);
   }
 
-  void updateLocation(double? latitude, double? longitude) {
-    _sharedDataInstance.updateLocation(latitude, longitude);
+  void updateLocation(double? latitude, double? longitude, int? lastUpdateTimestamp) {
+    _sharedDataInstance.updateLocation(latitude, longitude, lastUpdateTimestamp);
   }
 
   String? getbusID() {
     return _sharedDataInstance.busID;
   }
+
+  Future<void> saveData(SharedData sharedData) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('latitude', sharedData.latitude!);
+    await prefs.setDouble('longitude', sharedData.longitude!);
+    await prefs.setInt('timeStamp', sharedData.timeStamp!);
+    await prefs.setInt('lastUpdateTimestamp', sharedData.lastUpdateTimestamp!);
+  }
+
 }

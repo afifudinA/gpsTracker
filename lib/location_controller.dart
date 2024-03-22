@@ -16,7 +16,7 @@ class LocationService {
   Future<Location?> getLocation() async {
     try {
       Location location = await BackgroundLocation().getCurrentLocation();
-      print('This is current Location ' + location.toMap().toString());
+      // print('This is current Location ' + location.toMap().toString());
       return location;
     } catch (e) {
       print('Error getting location: $e');
